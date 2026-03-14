@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rice-AI | ระบบวิเคราะห์คุณภาพข้าวเปลือกอัจฉริยะ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #059669; /* สีเขียวเข้มแบบธุรกิจเกษตร */
+            --primary-dark: #047857;
+            --secondary-color: #f3f4f6;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --white: #ffffff;
+        }
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: var(--secondary-color);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        /* Navbar */
+        .navbar {
+            background-color: var(--white);
+            padding: 15px 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar .logo { font-size: 22px; font-weight: 700; color: var(--primary-color); }
+        .navbar .logo i { margin-right: 8px; }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: var(--white);
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .hero h1 { margin: 0; font-size: 36px; font-weight: 700; }
+        .hero p { font-size: 18px; opacity: 0.9; max-width: 600px; margin: 15px auto 0; }
+
+        /* Features Section */
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            max-width: 1000px;
+            margin: -30px auto 30px;
+            padding: 0 20px;
+            flex-wrap: wrap;
+        }
+        .feature-box {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            text-align: center;
+            flex: 1;
+            min-width: 250px;
+            border-top: 4px solid var(--primary-color);
+        }
+        .feature-box i { font-size: 32px; color: var(--primary-color); margin-bottom: 15px; }
+        .feature-box h3 { margin: 0 0 10px; font-size: 18px; }
+        .feature-box p { margin: 0; font-size: 14px; color: var(--text-light); }
+
+        /* Main Application Section */
+        .app-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            display: flex;
+            gap: 30px;
+            padding: 0 20px;
+            flex-wrap: wrap;
+        }
+        .panel {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            flex: 1;
+            min-width: 350px;
+        }
+        .panel-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+        .panel-header i { font-size: 20px; color: var(--primary-color); margin-right: 10px; }
+        .panel-header h2 { margin: 0; font-size: 20px; }
+
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            background-color: #f8fafc;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .upload-area:hover { border-color: var(--primary-color); background-color: #f0fdf4; }
+        .upload-area i { font-size: 40px; color: #94a3b8; margin-bottom: 15px; }
+        
+        button {
+            background-color: var(--primary-color);
+            color: var(--white);
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-family: 'Sarabun', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            
+        }
+        button:hover { background-color: var(--primary-dark); }
+        button:disabled { background-color: #94a3b8; cursor: not-allowed; }
+
+        /* Results Area */
+        .result-img-container {
+            text-align: center;
+            min-height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 20px;
+        }
+        .result-img-container img { max-width: 100%; max-height: 400px; display: none; border-radius: 8px; }
+        
+        .stats-container { display: flex; gap: 15px; flex-wrap: wrap; }
+        .stat-card {
+            flex: 1;
+            background: #f0fdf4;
+            border: 1px solid #dcfce7;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 120px;
+        }
+        .stat-card h4 { margin: 0; font-size: 14px; color: var(--text-light); }
+        .stat-card span { font-size: 24px; font-weight: 700; color: var(--primary-color); display: block; margin-top: 5px;}
+        .stat-card.alert { background: #fef2f2; border-color: #fee2e2; }
+        .stat-card.alert span { color: #dc2626; }
+        
+        #loading { display: none; text-align: center; color: var(--primary-color); font-weight: 600; margin-top: 15px; }
+
+        /* Footer */
+        .footer { text-align: center; padding: 20px; color: var(--text-light); font-size: 14px; margin-top: 40px; }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="logo"><i class="fa-solid fa-wheat-awn"></i> Rice-AI System</div>
+        <div style="font-size: 14px; color: #666;"><i class="fa-solid fa-circle-user"></i> สำหรับพนักงานตรวจสอบ</div>
+    </div>
+
+    <div class="hero">
+        <h1>ตรวจสอบความบริสุทธิ์ของข้าวเปลือกด้วย AI</h1>
+    </div>
+
+    <div class="features">
+        <div class="feature-box">
+            <i class="fa-solid fa-microscope"></i>
+            <h3>จำแนกประเภทเปลือก</h3>
+            <p>แยกความแตกต่างระหว่างข้าวเปลือกที่เป็นข้าวเจ้าและข้าวเหนียวด้วยภาพถ่าย</p>
+        </div>
+        <div class="feature-box">
+            <i class="fa-solid fa-magnifying-glass-chart"></i>
+            <h3>ตรวจจับสิ่งเจือปน</h3>
+            <p>ค้นหาและนับจำนวนสิ่งเจือปน หิน  หรือเศษซากพืช เพื่อประเมินความบริสุทธิ์</p>
+        </div>
+        <div class="feature-box">
+            <i class="fa-solid fa-bolt"></i>
+            <h3>ประเมินผลรวดเร็ว</h3>
+            <p>ทราบเปอร์เซ็นต์ความบริสุทธิ์ได้ทันที ช่วยลดระยะเวลาในการรับซื้อข้าว</p>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <div class="panel">
+            <div class="panel-header">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <h2>นำเข้าข้อมูลภาพ</h2>
+            </div>
+            <p style="color: var(--text-light); font-size: 14px; margin-bottom: 20px;">อัปโหลดภาพตัวอย่างข้าวเปลือกที่ต้องการตรวจสอบ ระบบจะทำการประมวลผลและแสดงผลลัพธ์ภายในไม่กี่วินาที</p>
+            
+            <label for="imageInput" style="display: block;">
+                <div class="upload-area">
+                    <i class="fa-regular fa-image"></i>
+                    <p style="margin: 0; font-weight: 600;">คลิกเพื่อเลือกไฟล์รูปภาพ</p>
+                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #94a3b8;">รองรับไฟล์ JPG, PNG</p>
+                </div>
+            </label>
+            <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="updateFileName()">
+            
+            <div id="fileNameDisplay" style="text-align: center; margin-bottom: 15px; font-size: 14px; color: var(--primary-color); font-weight: 600;"></div>
+
+            <div style="margin-bottom: 20px; text-align: left;">
+                <label for="targetRice" style="font-weight: bold; font-size: 14px; color: var(--text-dark);">
+                    <i class="fa-solid fa-list-check"></i> เลือกข้าวเป้าหมาย (Target):
+                </label>
+                <select id="targetRice" style="width: 100%; padding: 12px; margin-top: 8px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: 'Sarabun', sans-serif; font-size: 16px;">
+                    <option value="ไม่ระบุ">ตรวจดูทั้งหมด (ไม่ระบุเป้าหมาย)</option>
+                    <option value="ข้าวเจ้า">ข้าวเจ้า</option>
+                    <option value="ข้าวเหนียว">ข้าวเหนียว</option>
+                </select>
+                <p style="font-size: 12px; color: #ef4444; margin-top: 5px;">* หากระบุชนิด เมล็ดข้าวชนิดอื่นที่ปนมาจะถูกนับเป็นสิ่งเจือปน</p>
+            </div>
+
+            <button id="analyzeBtn" onclick="uploadImage()">
+                <i class="fa-solid fa-robot"></i> เริ่มการวิเคราะห์
+            </button>
+            <div id="loading"><i class="fa-solid fa-circle-notch fa-spin"></i> ระบบกำลังประมวลผลภาพ...</div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">
+                <i class="fa-solid fa-chart-pie"></i>
+                <h2>รายงานผลการตรวจสอบ</h2>
+            </div>
+            
+            <div id="resultsStats" class="stats-container" style="margin-bottom: 20px;">
+                <div style="width: 100%; padding: 20px; text-align: center; color: #94a3b8; border: 1px dashed #cbd5e1; border-radius: 8px;">
+                    กรุณาอัปโหลดภาพเพื่อดูรายงานผลความบริสุทธิ์
+                </div>
+            </div>
+
+            <div class="result-img-container">
+                <span id="placeholderText" style="color: #94a3b8;">ภาพพร้อมกรอบระบุตำแหน่งจะแสดงที่นี่</span>
+                <img id="outputImage" alt="ผลลัพธ์การวิเคราะห์">
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2026 ระบบประเมินคุณภาพข้าวเปลือกด้วย AI  | ข้อมูลใช้เพื่อการประกอบการตัดสินใจเบื้องต้นและเป็นการประเมินเชิงปริมาณเท่านั้น
+    </div>
+
+    <script>
+        function updateFileName() {
+            const input = document.getElementById('imageInput');
+            const display = document.getElementById('fileNameDisplay');
+            if(input.files.length > 0) {
+                display.innerText = "ไฟล์ที่เลือก: " + input.files[0].name;
+            }
+        }
+
+        async function uploadImage() {
+            const fileInput = document.getElementById('imageInput');
+            const targetRice = document.getElementById('targetRice').value; // ดึงค่าจากตัวเลือก
+            const btn = document.getElementById('analyzeBtn');
+            const loading = document.getElementById('loading');
+            
+            if (fileInput.files.length === 0) {
+                alert('กรุณาเลือกรูปภาพก่อนครับ');
+                return;
+            }
+
+            btn.disabled = true;
+            loading.style.display = 'block';
+            document.getElementById('resultsStats').innerHTML = '';
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            formData.append('target_rice', targetRice); // ส่งค่าข้าวเป้าหมายไปให้ FastAPI
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/predict/', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error('Network response was not ok');
+
+                const data = await response.json();
+
+                btn.disabled = false;
+                loading.style.display = 'none';
+
+                document.getElementById('placeholderText').style.display = 'none';
+                const outputImg = document.getElementById('outputImage');
+                outputImg.src = data.image;
+                outputImg.style.display = 'block';
+
+                // --- คำนวณเปอร์เซ็นต์แบบใหม่ โดยอิงจากข้าวเป้าหมาย ---
+// --- ค้นหาส่วนนี้ใน <script> แล้วแก้เป็นโค้ดนี้ครับ ---
+                let totalObjects = data.target_count + data.impurity_count;
+                let statsHtml = '';
+
+                if (totalObjects > 0) {
+                    let purityPercentage = (data.target_count / totalObjects) * 100;
+                    
+                    let purityColor = purityPercentage >= 90 ? '#059669' : '#ea580c';
+                    let purityBg = purityPercentage >= 90 ? '#dcfce7' : '#ffedd5';
+                    let purityBorder = purityPercentage >= 90 ? '#bbf7d0' : '#fed7aa';
+                    let statusIcon = purityPercentage >= 90 ? '<i class="fa-solid fa-circle-check"></i>' : '<i class="fa-solid fa-triangle-exclamation"></i>';
+                    
+                    // เปลี่ยนคำเรียกให้สอดคล้องกับตัวเลือก
+                    let targetLabel = data.target_rice === "ไม่ระบุ" ? "ข้าวเปลือกรวม" : data.target_rice;
+
+                    statsHtml += `
+                        <div class="stat-card" style="flex-basis: 100%; background: ${purityBg}; border-color: ${purityBorder};">
+                            <h4 style="font-size: 16px;">${statusIcon} เปอร์เซ็นต์ความบริสุทธิ์ของ${targetLabel}</h4>
+                            <span style="font-size: 36px; color: ${purityColor};">${purityPercentage.toFixed(2)}%</span>
+                        </div>
+                    `;
+                }
+
+                for (const [className, count] of Object.entries(data.counts)) {
+                    // ลอจิกการแจ้งเตือนกล่องสีแดง
+                    let isAlert = '';
+                    if (data.target_rice === "ไม่ระบุ") {
+                        // ถ้าไม่ระบุเป้าหมาย ให้ขึ้นสีแดงเฉพาะคำว่าสิ่งเจือปน
+                        isAlert = className === 'สิ่งเจือปน' ? 'alert' : '';
+                    } else {
+                        // ถ้าระบุเป้าหมาย อะไรที่ไม่ใช่เป้าหมายให้ขึ้นสีแดงหมด
+                        isAlert = className !== data.target_rice ? 'alert' : '';
+                    }
+
+                    statsHtml += `
+                        <div class="stat-card ${isAlert}">
+                            <h4>${className}</h4>
+                            <span>${count}</span>
+                        </div>
+                    `;
+                }
+                // ---------------------------------------------------
+                
+                if(statsHtml === '') {
+                    statsHtml = '<div style="width:100%; padding:20px; text-align:center; color:#94a3b8; border: 1px dashed #cbd5e1; border-radius: 8px;">ระบบไม่พบวัตถุเป้าหมายในภาพนี้</div>';
+                }
+                
+                document.getElementById('resultsStats').innerHTML = statsHtml;
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('เกิดข้อผิดพลาดในการประมวลผล ตรวจสอบให้แน่ใจว่าระบบหลังบ้าน (FastAPI) ทำงานอยู่');
+                btn.disabled = false;
+                loading.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
